@@ -1,9 +1,6 @@
 from models.material import Material
 
 
-ModuleT = object  # real type signature unknown
-
-
 class ChangongBluetoothException(Exception):
     """
     블루투스 관련 오류의 부모 클래스
@@ -36,26 +33,29 @@ class AlreadyConnectedException(ChangongBluetoothException):
         super().__init__(f"이미 연결된 {mat.name}에 추가로 기기를 연결할 수 없습니다.")
 
 
+class Module:
+    material: Material
+    def __init__(self, material: Material) -> None:
+        self.material = material
+    
+    def call(self):
+        """
+        블루투스 통신 처리.
+        """
+        pass
+
+
 class BluetoothHandler:
     """
     블루투스 모듈 연결 관리
     """
     def __init__(self) -> None:
-        self.devices: dict[Material, ModuleT] = {
+        self.devices: dict[Material, Module | None] = {
             mat: None
             for mat in Material
         }
 
-    def setup(self) -> None:
-        pass
-
-    def loop(self) -> None:
-        pass
-    
-    def teardown(self) -> None:
-        pass
-
-    def connect(self, mat: Material, mod: ModuleT):
+    def connect(self, mat: Material, mod: Module):
         if self.devices[mat] is not None:
             raise AlreadyConnectedException(mat)
         self.devices[mat] = mod
@@ -66,5 +66,5 @@ class BluetoothHandler:
         self.devices[mat] = None
 
     def call(self, mat: Material):
-        device: ModuleT = self.devices[mat]
+        device: Module = self.devices[mat]
         # device.write(...)
