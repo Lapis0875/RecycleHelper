@@ -1,5 +1,7 @@
 from models.material import Material
 
+import serial
+
 
 class ChangongBluetoothException(Exception):
     """
@@ -35,14 +37,22 @@ class AlreadyConnectedException(ChangongBluetoothException):
 
 class Module:
     material: Material
-    def __init__(self, material: Material) -> None:
+    ser: serial.Serial
+
+    data: str
+
+    def __init__(self, port: str, material: Material) -> None:
         self.material = material
+        self.ser: serial.Serial = serial.Serial(port, 9600, timeout=1)
+
+    def send(self, data: str) -> None:
+        self.ser.write(str.encode(data, 'ASCII'))
+
+    def receive(self) -> str:
+        return self.ser.read(self.ser.in_waiting or 1).decode('ASCII')
     
-    def call(self):
-        """
-        블루투스 통신 처리.
-        """
-        pass
+    def __del__(self) -> None:
+       self.ser.close()
 
 
 class BluetoothHandler:
@@ -63,8 +73,12 @@ class BluetoothHandler:
     def disconnect(self, mat: Material):
         if self.devices[mat] is None:
             raise NotConnectedException(mat)
+
+        del self.devices[mat]
+
         self.devices[mat] = None
 
     def call(self, mat: Material):
         device: Module = self.devices[mat]
-        # device.write(...)
+
+        device.send('a')
