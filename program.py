@@ -4,13 +4,26 @@ from os import environ
 import serial
 
 from handlers.barcode_api import BarcodeHandler
-from handlers.bluetooth_handler import BluetoothHandler
+from handlers.bluetooth_handler import BluetoothHandler, Module
+
+from models.material import Material
 from models.response import BarcodeResponse, ProductResponse
 from models.product import Product
 
 PORT: Final[str] = "/dev/ttyUSB0"
 BAUDRATE: Final[int] = 9600
 environ["FOOD_SAFETY_KR_API_KEY"] = "5c3691cdc5fb4104bc46"
+
+class BluetoothTester:
+    def __init__(self):
+        self.bluetooth_handler = BluetoothHandler()
+    
+    def run(self):
+        test_module: Module = Module("COM3")
+
+        self.bluetooth_handler.connect(Material.NORMAL)
+        self.bluetooth_handler.call(Material.NORMAL)
+
 
 
 class BarcodeTester:

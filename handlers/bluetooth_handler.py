@@ -36,13 +36,11 @@ class AlreadyConnectedException(ChangongBluetoothException):
 
 
 class Module:
-    material: Material
     ser: serial.Serial
 
     data: str
 
-    def __init__(self, port: str, material: Material) -> None:
-        self.material = material
+    def __init__(self, port: str) -> None:
         self.ser: serial.Serial = serial.Serial(port, 9600, timeout=1)
 
     def send(self, data: str) -> None:
@@ -79,6 +77,9 @@ class BluetoothHandler:
         self.devices[mat] = None
 
     def call(self, mat: Material):
+        if self.devices[mat] is None:
+            raise NotConnectedException(mat)
+
         device: Module = self.devices[mat]
 
         device.send('a')
