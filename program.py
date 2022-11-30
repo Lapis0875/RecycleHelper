@@ -21,7 +21,7 @@ class BluetoothTester:
     def run(self):
         test_module: Module = Module("COM3")
 
-        self.bluetooth_handler.connect(Material.NORMAL)
+        self.bluetooth_handler.connect(Material.NORMAL, test_module)
         self.bluetooth_handler.call(Material.NORMAL)
 
 
