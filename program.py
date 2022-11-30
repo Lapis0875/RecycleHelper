@@ -24,6 +24,8 @@ class BluetoothTester:
         self.bluetooth_handler.connect(Material.NORMAL, test_module)
         self.bluetooth_handler.call(Material.NORMAL)
 
+        print("call success")
+
 
 
 class BarcodeTester:
