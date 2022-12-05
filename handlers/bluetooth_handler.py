@@ -76,10 +76,18 @@ class BluetoothHandler:
 
         self.devices[mat] = None
 
+    def pair(self, mat: Material):
+        if self.devices[mat] is None:
+            raise NotConnectedException(mat)
+
+        device: Module = self.devices[mat]
+
+        device.send('y')
+
     def call(self, mat: Material):
         if self.devices[mat] is None:
             raise NotConnectedException(mat)
 
         device: Module = self.devices[mat]
 
-        device.send('a')
+        device.send('1')
