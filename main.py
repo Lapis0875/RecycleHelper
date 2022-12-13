@@ -2,9 +2,8 @@ from program import BarcodeSearcher, BluetoothTester
 
 
 def test():
-    from program import BluetoothTester
     instance = BluetoothTester()
-    instance.run()
+    # instance.run()
     print("Test done successfully.")
 
 

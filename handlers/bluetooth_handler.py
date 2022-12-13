@@ -1,3 +1,4 @@
+from typing import cast
 from models.material import Material
 
 import serial
@@ -80,7 +81,7 @@ class BluetoothHandler:
         if self.devices[mat] is None:
             raise NotConnectedException(mat)
 
-        device: Module = self.devices[mat]
+        device: Module = cast(Module, self.devices[mat])
 
         device.send('y')
 
@@ -88,6 +89,6 @@ class BluetoothHandler:
         if self.devices[mat] is None:
             raise NotConnectedException(mat)
 
-        device: Module = self.devices[mat]
+        device: Module = cast(Module, self.devices[mat])
 
         device.send('1')

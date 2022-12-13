@@ -1,7 +1,11 @@
 from typing import Final
 from os import environ
 
+import glob
+
 import serial
+import serial.tools.list_ports
+
 import bluetooth
 
 from handlers.barcode_api import BarcodeHandler
@@ -23,6 +27,7 @@ def lookUpNearbyBluetoothDevices():
 class BluetoothTester:
     def __init__(self):
         # lookUpNearbyBluetoothDevices()
+        print([str(port) for port, desc, hwid in serial.tools.list_ports.comports()])
         self.bluetooth_handler = BluetoothHandler()
     
     def run(self):
@@ -97,7 +102,7 @@ class BarcodeSearcher:
     바코드 번호를 사용해, 식품의약처 API로 제품의 포장 재질을 알아냅니다.
     """
     def __init__(self):
-        self.serial: serial.Serial = serial.Serial(PORT, BAUDRATE)
+        self.serial: serial.Serial = serial.Serial(PORT, BAUDRATE)  # 
         self.barcode_api = BarcodeHandler()
         self.bluetooth_handler = BluetoothHandler()
 
@@ -123,12 +128,9 @@ class BarcodeSearcher:
         running: bool = True
         while running:
             line: bytes = self.serial.readline()   # 타임아웃을 지정하지 않았으므로, 시리얼로부터 완전한 한 줄 (바코드 번호 전체)를 받을때까지 대기.
-            if line == b"exit\r\n":
-                break
             barcode: str = line.decode("utf-8").strip()   # 바이트열을 문자열로 변환하고, 불필요한 공백을 제거.
             product = self.search(barcode)
-            # TODO : 블루투스 연결
-            self.serial.write(product.material.value.encode("utf-8"))   # 아두이노로 바코드 번호를 전송.
+            self.bluetooth_handler.call(product.material)
 
     def teardown(self):
         """
